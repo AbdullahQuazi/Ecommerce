@@ -1,0 +1,26 @@
+[
+  {
+    "id": "admin1",
+    "name": "Admin",
+    "email": "admin@store.com",
+    "password": "$2a$10$yAsWKqgbrEsOUFj4FRJbU.jMyeFJULvZERZQyYS7Ua4m41sDsVP1C",
+    "role": "admin",
+    "createdAt": "2026-01-04T06:47:51.251Z"
+  },
+  {
+    "id": "mjzdoxe83cx302pd32d",
+    "name": "White Formal Shirt",
+    "email": "quazi0306@gmail.com",
+    "password": "$2a$10$WGDWckKi5JomFzS5jurXA.koDOrxprufJqjtboR5gQo9iLRr7DXiW",
+    "role": "user",
+    "createdAt": "2026-01-04T06:56:28.688Z"
+  },
+  {
+    "id": "mk0m9ckgo39spcivvg",
+    "name": "test",
+    "email": "test@gmail.com",
+    "password": "$2a$10$YwyiFxy3hGsLNcc/vsunJeKTKq3auyC3bLd7ftcsqTyQfAUVvm3hy",
+    "role": "user",
+    "createdAt": "2026-01-05T03:44:04.576Z"
+  }
+]

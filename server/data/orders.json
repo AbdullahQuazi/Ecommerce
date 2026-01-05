@@ -1,0 +1,61 @@
+[
+  {
+    "id": "mjzfpjdxmsfl8l8gazq",
+    "user": {
+      "id": "mjzdoxe83cx302pd32d",
+      "name": "White Formal Shirt",
+      "email": "quazi0306@gmail.com"
+    },
+    "items": [
+      {
+        "name": "Urban Streetwear Hoodie",
+        "image": "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=500",
+        "price": 2499,
+        "quantity": 2,
+        "size": "S",
+        "color": "Black"
+      },
+      {
+        "name": "Premium Denim Jacket",
+        "image": "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=500",
+        "price": 3999,
+        "quantity": 1,
+        "size": "S",
+        "color": "Light Blue"
+      },
+      {
+        "name": "Red T Shirt",
+        "image": "https://unikaas.com/wp-content/uploads/2023/09/red-t-shirt.png",
+        "price": 529,
+        "quantity": 1,
+        "size": "S",
+        "color": "Default"
+      },
+      {
+        "product": "prod8",
+        "name": "Slim Fit Chino Pants",
+        "image": "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=500",
+        "price": 2299,
+        "quantity": 1,
+        "size": "S",
+        "color": "Khaki"
+      }
+    ],
+    "shippingAddress": {
+      "street": "Bhatkal",
+      "city": "Bhatkal",
+      "state": "Karnatka",
+      "zipCode": "581320",
+      "country": "India"
+    },
+    "paymentMethod": "COD",
+    "itemsPrice": 11825,
+    "shippingPrice": 0,
+    "taxPrice": 2129,
+    "totalPrice": 13954,
+    "status": "processing",
+    "paymentStatus": "pending",
+    "createdAt": "2026-01-04T07:52:56.421Z",
+    "deliveredAt": "2026-01-04T07:53:25.286Z"
+  }
+]
