@@ -1,79 +1,67 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+const { OAuth2Client } = require('google-auth-library');
 const { readJSON, writeJSON, generateId } = require('../config/db');
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Generate JWT Token
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
 
-// @route   POST /api/auth/register
-router.post('/register', async (req, res) => {
+// @route   POST /api/auth/google
+// @desc    Authenticate with Google
+router.post('/google', async (req, res) => {
     try {
-        const { name, email, password } = req.body;
+        const { credential } = req.body;
 
-        const users = readJSON('users.json');
-        const userExists = users.find(u => u.email.toLowerCase() === email.toLowerCase());
-
-        if (userExists) {
-            return res.status(400).json({ message: 'User already exists' });
-        }
-
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        const newUser = {
-            id: generateId(),
-            name,
-            email,
-            password: hashedPassword,
-            role: 'user',
-            createdAt: new Date().toISOString(),
-        };
-
-        users.push(newUser);
-        writeJSON('users.json', users);
-
-        res.status(201).json({
-            _id: newUser.id,
-            name: newUser.name,
-            email: newUser.email,
-            role: newUser.role,
-            token: generateToken(newUser.id),
+        // Verify Google token
+        const ticket = await client.verifyIdToken({
+            idToken: credential,
+            audience: process.env.GOOGLE_CLIENT_ID,
         });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
 
-// @route   POST /api/auth/login
-router.post('/login', async (req, res) => {
-    try {
-        const { email, password } = req.body;
+        const payload = ticket.getPayload();
+        const { sub: googleId, email, name, picture } = payload;
 
+        // Check if user exists
         const users = readJSON('users.json');
-        const user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+        let user = users.find(u => u.email.toLowerCase() === email.toLowerCase());
 
         if (!user) {
-            return res.status(401).json({ message: 'Invalid email or password' });
-        }
-
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(401).json({ message: 'Invalid email or password' });
+            // Create new user
+            user = {
+                id: generateId(),
+                googleId,
+                name,
+                email,
+                picture,
+                role: 'user',
+                createdAt: new Date().toISOString(),
+            };
+            users.push(user);
+            writeJSON('users.json', users);
+        } else {
+            // Update existing user with Google info
+            user.googleId = googleId;
+            user.picture = picture;
+            if (!user.name) user.name = name;
+            writeJSON('users.json', users);
         }
 
         res.json({
             _id: user.id,
             name: user.name,
             email: user.email,
+            picture: user.picture,
             role: user.role,
             token: generateToken(user.id),
         });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('Google auth error:', error);
+        res.status(401).json({ message: 'Google authentication failed' });
     }
 });
 
@@ -98,6 +86,7 @@ router.get('/me', async (req, res) => {
             _id: user.id,
             name: user.name,
             email: user.email,
+            picture: user.picture,
             role: user.role,
         });
     } catch (error) {

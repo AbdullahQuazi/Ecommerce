@@ -1,17 +1,15 @@
-import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../context/AuthContext';
+import { FiShoppingBag } from 'react-icons/fi';
 
 const Login = () => {
     const navigate = useNavigate();
-    const { login, isAuthenticated, isAdmin } = useAuth();
-    const [formData, setFormData] = useState({ email: '', password: '' });
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
+    const { googleLogin, isAuthenticated, isAdmin } = useAuth();
 
     useEffect(() => {
         if (isAuthenticated) {
-            // Redirect admin to admin dashboard, users to home
             if (isAdmin) {
                 navigate('/admin');
             } else {
@@ -20,28 +18,21 @@ const Login = () => {
         }
     }, [isAuthenticated, isAdmin, navigate]);
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError('');
-        setLoading(true);
-
+    const handleGoogleSuccess = async (credentialResponse) => {
         try {
-            const userData = await login(formData.email, formData.password);
-            // Redirect based on role
+            const userData = await googleLogin(credentialResponse.credential);
             if (userData.role === 'admin') {
                 navigate('/admin');
             } else {
                 navigate('/');
             }
-        } catch (err) {
-            setError(err.response?.data?.message || 'Login failed');
-        } finally {
-            setLoading(false);
+        } catch (error) {
+            console.error('Login failed:', error);
         }
+    };
+
+    const handleGoogleError = () => {
+        console.error('Google Sign-In failed');
     };
 
     return (
@@ -49,63 +40,42 @@ const Login = () => {
             <div className="auth-container">
                 <div className="auth-card">
                     <div className="auth-header">
-                        <h1 className="auth-title">Welcome Back</h1>
-                        <p className="auth-subtitle">Sign in to continue</p>
+                        <div style={{
+                            fontSize: '3rem',
+                            marginBottom: 'var(--spacing-md)',
+                            background: 'var(--gradient-primary)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent'
+                        }}>
+                            <FiShoppingBag />
+                        </div>
+                        <h1 className="auth-title">Welcome to URBANFIT</h1>
+                        <p className="auth-subtitle">Sign in to continue shopping</p>
                     </div>
 
-                    {error && (
-                        <div style={{
-                            padding: 'var(--spacing-md)',
-                            background: 'rgba(239, 68, 68, 0.1)',
-                            border: '1px solid rgba(239, 68, 68, 0.3)',
-                            borderRadius: 'var(--radius-md)',
-                            color: 'var(--color-error)',
-                            marginBottom: 'var(--spacing-lg)',
-                            fontSize: '0.875rem'
-                        }}>
-                            {error}
-                        </div>
-                    )}
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        marginTop: 'var(--spacing-xl)'
+                    }}>
+                        <GoogleLogin
+                            onSuccess={handleGoogleSuccess}
+                            onError={handleGoogleError}
+                            theme="filled_black"
+                            size="large"
+                            text="continue_with"
+                            shape="pill"
+                            width="300"
+                        />
+                    </div>
 
-                    <form onSubmit={handleSubmit}>
-                        <div className="form-group">
-                            <label className="form-label">Email</label>
-                            <input
-                                type="email"
-                                name="email"
-                                className="form-input"
-                                placeholder="Enter your email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label className="form-label">Password</label>
-                            <input
-                                type="password"
-                                name="password"
-                                className="form-input"
-                                placeholder="Enter your password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-
-                        <button
-                            type="submit"
-                            className="btn btn-primary btn-lg"
-                            style={{ width: '100%' }}
-                            disabled={loading}
-                        >
-                            {loading ? 'Signing in...' : 'Sign In'}
-                        </button>
-                    </form>
-
-                    <p className="auth-footer">
-                        Don't have an account? <Link to="/register">Sign Up</Link>
+                    <p style={{
+                        textAlign: 'center',
+                        marginTop: 'var(--spacing-xl)',
+                        color: 'var(--color-text-muted)',
+                        fontSize: '0.8rem'
+                    }}>
+                        By signing in, you agree to our Terms of Service and Privacy Policy
                     </p>
                 </div>
             </div>
