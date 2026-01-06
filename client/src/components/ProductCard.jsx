@@ -53,6 +53,12 @@ const ProductCard = ({ product }) => {
                 {discount > 0 && (
                     <span className="product-badge">-{discount}%</span>
                 )}
+                {/* Always visible heart indicator when liked */}
+                {inWishlist && (
+                    <span className="product-liked-badge">
+                        <FiHeart fill="#ef4444" size={14} color="#ef4444" />
+                    </span>
+                )}
                 <div className="product-actions">
                     <button
                         className={`btn ${added ? 'btn-success' : 'btn-primary'} btn-sm`}

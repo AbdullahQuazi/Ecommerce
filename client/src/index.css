@@ -578,6 +578,35 @@ h4 {
   overflow: hidden;
 }
 
+/* === Welcome Header === */
+.welcome-header {
+  background: linear-gradient(90deg, var(--color-accent) 0%, var(--color-accent-dark) 100%);
+  color: white;
+  padding: var(--spacing-sm) 0;
+}
+
+.welcome-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  font-size: 0.9rem;
+}
+
+.welcome-link {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.welcome-link:hover {
+  color: white;
+  gap: var(--spacing-sm);
+}
+
 .hero-bg {
   position: absolute;
   inset: 0;
@@ -754,6 +783,36 @@ h4 {
   font-weight: 600;
   border-radius: var(--radius-sm);
   text-transform: uppercase;
+}
+
+.product-liked-badge {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+  z-index: 5;
+  animation: heartPulse 0.3s ease;
+}
+
+@keyframes heartPulse {
+  0% {
+    transform: scale(0);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 .product-actions {

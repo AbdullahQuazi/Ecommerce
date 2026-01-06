@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FiArrowRight, FiZap, FiTruck, FiRefreshCw } from 'react-icons/fi';
+import { FiArrowRight, FiZap, FiTruck, FiRefreshCw, FiUser } from 'react-icons/fi';
 import ProductCard from '../components/ProductCard';
 import { productsAPI } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const Home = () => {
     const [featuredProducts, setFeaturedProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { user } = useAuth();
 
     useEffect(() => {
         fetchFeaturedProducts();
@@ -46,6 +48,21 @@ const Home = () => {
 
     return (
         <main>
+            {/* Welcome Header for logged-in users */}
+            {user && (
+                <section className="welcome-header">
+                    <div className="container">
+                        <div className="welcome-content">
+                            <FiUser size={20} />
+                            <span>Welcome back, <strong>{user.name}</strong>!</span>
+                            <Link to="/collection" className="welcome-link">
+                                View Your Collection <FiArrowRight size={14} />
+                            </Link>
+                        </div>
+                    </div>
+                </section>
+            )}
+
             {/* Hero Section */}
             <section className="hero">
                 <div className="hero-bg"></div>
