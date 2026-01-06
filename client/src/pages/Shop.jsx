@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { FiFilter, FiX } from 'react-icons/fi';
 import ProductCard from '../components/ProductCard';
+import PageHeader from '../components/PageHeader';
 import { productsAPI } from '../services/api';
 
 const Shop = () => {
@@ -62,31 +63,38 @@ const Shop = () => {
 
     const hasActiveFilters = filters.gender || filters.category;
 
+    const getPageTitle = () => {
+        if (filters.gender) {
+            return `${filters.gender.charAt(0).toUpperCase() + filters.gender.slice(1)}'s Collection`;
+        }
+        if (filters.category) {
+            return filters.category.charAt(0).toUpperCase() + filters.category.slice(1);
+        }
+        return 'Shop All Products';
+    };
+
+    const getBreadcrumbs = () => {
+        const crumbs = [{ label: 'Shop', link: '/shop' }];
+        if (filters.gender) {
+            crumbs.push({ label: filters.gender.charAt(0).toUpperCase() + filters.gender.slice(1) });
+        }
+        if (filters.category) {
+            crumbs.push({ label: filters.category.charAt(0).toUpperCase() + filters.category.slice(1) });
+        }
+        return crumbs;
+    };
+
     return (
-        <div className="page">
-            <div className="container">
-                {/* Header */}
-                <div className="section-header" style={{ marginBottom: 'var(--spacing-xl)' }}>
-                    <div>
-                        <h1 className="section-title">
-                            {filters.gender
-                                ? `${filters.gender.charAt(0).toUpperCase() + filters.gender.slice(1)}'s Collection`
-                                : filters.category
-                                    ? filters.category.charAt(0).toUpperCase() + filters.category.slice(1)
-                                    : 'All Products'}
-                        </h1>
-                        <p style={{ color: 'var(--color-text-secondary)', marginTop: 'var(--spacing-sm)' }}>
-                            {products.length} products found
-                        </p>
-                    </div>
-                    <div style={{ display: 'flex', gap: 'var(--spacing-md)', alignItems: 'center' }}>
-                        <button
-                            className="btn btn-secondary"
-                            onClick={() => setShowFilters(!showFilters)}
-                            style={{ display: 'none' }} // Hide on desktop
-                        >
-                            <FiFilter /> Filters
-                        </button>
+        <>
+            <PageHeader
+                title={getPageTitle()}
+                subtitle={`${products.length} products found`}
+                breadcrumbs={getBreadcrumbs()}
+            />
+            <div className="page" style={{ paddingTop: 0 }}>
+                <div className="container">
+                    {/* Sort Controls */}
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 'var(--spacing-xl)' }}>
                         <select
                             className="form-input"
                             value={filters.sort}
@@ -100,129 +108,129 @@ const Shop = () => {
                             ))}
                         </select>
                     </div>
-                </div>
 
-                <div className="shop-layout">
-                    {/* Filters Sidebar */}
-                    <aside className="filters-sidebar">
-                        <div style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            marginBottom: 'var(--spacing-xl)'
-                        }}>
-                            <h3>Filters</h3>
-                            {hasActiveFilters && (
-                                <button
-                                    className="btn btn-sm"
-                                    onClick={clearFilters}
-                                    style={{ color: 'var(--color-accent)' }}
-                                >
-                                    Clear All
-                                </button>
-                            )}
-                        </div>
-
-                        {/* Gender Filter */}
-                        <div className="filter-section">
-                            <h4 className="filter-title">Gender</h4>
-                            <div className="filter-options">
-                                <div
-                                    className={`filter-option ${!filters.gender ? 'active' : ''}`}
-                                    onClick={() => updateFilter('gender', '')}
-                                >
-                                    All
-                                </div>
-                                {genders.map((gender) => (
-                                    <div
-                                        key={gender}
-                                        className={`filter-option ${filters.gender === gender ? 'active' : ''}`}
-                                        onClick={() => updateFilter('gender', gender)}
-                                    >
-                                        {gender.charAt(0).toUpperCase() + gender.slice(1)}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Category Filter */}
-                        <div className="filter-section">
-                            <h4 className="filter-title">Category</h4>
-                            <div className="filter-options">
-                                <div
-                                    className={`filter-option ${!filters.category ? 'active' : ''}`}
-                                    onClick={() => updateFilter('category', '')}
-                                >
-                                    All Categories
-                                </div>
-                                {categories.map((category) => (
-                                    <div
-                                        key={category}
-                                        className={`filter-option ${filters.category === category ? 'active' : ''}`}
-                                        onClick={() => updateFilter('category', category)}
-                                    >
-                                        {category.charAt(0).toUpperCase() + category.slice(1)}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </aside>
-
-                    {/* Products Grid */}
-                    <div>
-                        {/* Active Filters */}
-                        {hasActiveFilters && (
+                    <div className="shop-layout">
+                        {/* Filters Sidebar */}
+                        <aside className="filters-sidebar">
                             <div style={{
                                 display: 'flex',
-                                gap: 'var(--spacing-sm)',
-                                marginBottom: 'var(--spacing-xl)',
-                                flexWrap: 'wrap'
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                marginBottom: 'var(--spacing-xl)'
                             }}>
-                                {filters.gender && (
-                                    <span
-                                        className="btn btn-sm btn-secondary"
+                                <h3>Filters</h3>
+                                {hasActiveFilters && (
+                                    <button
+                                        className="btn btn-sm"
+                                        onClick={clearFilters}
+                                        style={{ color: 'var(--color-accent)' }}
+                                    >
+                                        Clear All
+                                    </button>
+                                )}
+                            </div>
+
+                            {/* Gender Filter */}
+                            <div className="filter-section">
+                                <h4 className="filter-title">Gender</h4>
+                                <div className="filter-options">
+                                    <div
+                                        className={`filter-option ${!filters.gender ? 'active' : ''}`}
                                         onClick={() => updateFilter('gender', '')}
                                     >
-                                        {filters.gender} <FiX />
-                                    </span>
-                                )}
-                                {filters.category && (
-                                    <span
-                                        className="btn btn-sm btn-secondary"
+                                        All
+                                    </div>
+                                    {genders.map((gender) => (
+                                        <div
+                                            key={gender}
+                                            className={`filter-option ${filters.gender === gender ? 'active' : ''}`}
+                                            onClick={() => updateFilter('gender', gender)}
+                                        >
+                                            {gender.charAt(0).toUpperCase() + gender.slice(1)}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Category Filter */}
+                            <div className="filter-section">
+                                <h4 className="filter-title">Category</h4>
+                                <div className="filter-options">
+                                    <div
+                                        className={`filter-option ${!filters.category ? 'active' : ''}`}
                                         onClick={() => updateFilter('category', '')}
                                     >
-                                        {filters.category} <FiX />
-                                    </span>
-                                )}
+                                        All Categories
+                                    </div>
+                                    {categories.map((category) => (
+                                        <div
+                                            key={category}
+                                            className={`filter-option ${filters.category === category ? 'active' : ''}`}
+                                            onClick={() => updateFilter('category', category)}
+                                        >
+                                            {category.charAt(0).toUpperCase() + category.slice(1)}
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                        )}
+                        </aside>
 
-                        {loading ? (
-                            <div className="loading">
-                                <div className="spinner"></div>
-                            </div>
-                        ) : products.length === 0 ? (
-                            <div className="empty-state">
-                                <div className="empty-icon">🔍</div>
-                                <h3 className="empty-title">No products found</h3>
-                                <p className="empty-description">
-                                    Try adjusting your filters to find what you're looking for.
-                                </p>
-                                <button className="btn btn-primary" onClick={clearFilters}>
-                                    Clear Filters
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="products-grid">
-                                {products.map((product) => (
-                                    <ProductCard key={product._id} product={product} />
-                                ))}
-                            </div>
-                        )}
+                        {/* Products Grid */}
+                        <div>
+                            {/* Active Filters */}
+                            {hasActiveFilters && (
+                                <div style={{
+                                    display: 'flex',
+                                    gap: 'var(--spacing-sm)',
+                                    marginBottom: 'var(--spacing-xl)',
+                                    flexWrap: 'wrap'
+                                }}>
+                                    {filters.gender && (
+                                        <span
+                                            className="btn btn-sm btn-secondary"
+                                            onClick={() => updateFilter('gender', '')}
+                                        >
+                                            {filters.gender} <FiX />
+                                        </span>
+                                    )}
+                                    {filters.category && (
+                                        <span
+                                            className="btn btn-sm btn-secondary"
+                                            onClick={() => updateFilter('category', '')}
+                                        >
+                                            {filters.category} <FiX />
+                                        </span>
+                                    )}
+                                </div>
+                            )}
+
+                            {loading ? (
+                                <div className="loading">
+                                    <div className="spinner"></div>
+                                </div>
+                            ) : products.length === 0 ? (
+                                <div className="empty-state">
+                                    <div className="empty-icon">🔍</div>
+                                    <h3 className="empty-title">No products found</h3>
+                                    <p className="empty-description">
+                                        Try adjusting your filters to find what you're looking for.
+                                    </p>
+                                    <button className="btn btn-primary" onClick={clearFilters}>
+                                        Clear Filters
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="products-grid">
+                                    {products.map((product) => (
+                                        <ProductCard key={product._id} product={product} />
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 
