@@ -58,4 +58,12 @@ export const adminAPI = {
     deleteUser: (id) => api.delete(`/admin/users/${id}`),
 };
 
+// Wishlist API
+export const wishlistAPI = {
+    get: () => api.get('/wishlist'),
+    getIds: () => api.get('/wishlist/ids'),
+    add: (productId) => api.post('/wishlist', { productId }),
+    remove: (productId) => api.delete(`/wishlist/${productId}`),
+};
+
 export default api;

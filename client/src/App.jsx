@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-route
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { WishlistProvider } from './context/WishlistContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { ProtectedRoute, AdminRoute } from './components/ProtectedRoute';
@@ -15,6 +16,7 @@ import Checkout from './pages/Checkout';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
 import Admin from './pages/Admin';
+import Collection from './pages/Collection';
 
 import './index.css';
 
@@ -38,43 +40,46 @@ function App() {
       <ThemeProvider>
         <AuthProvider>
           <CartProvider>
-            <Layout>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/shop" element={<Shop />} />
-                <Route path="/product/:id" element={<ProductDetail />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/login" element={<Login />} />
+            <WishlistProvider>
+              <Layout>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/shop" element={<Shop />} />
+                  <Route path="/product/:id" element={<ProductDetail />} />
+                  <Route path="/cart" element={<Cart />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/collection" element={<Collection />} />
 
-                {/* Protected Routes */}
-                <Route
-                  path="/checkout"
-                  element={
-                    <ProtectedRoute>
-                      <Checkout />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/profile"
-                  element={
-                    <ProtectedRoute>
-                      <Profile />
-                    </ProtectedRoute>
-                  }
-                />
+                  {/* Protected Routes */}
+                  <Route
+                    path="/checkout"
+                    element={
+                      <ProtectedRoute>
+                        <Checkout />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/profile"
+                    element={
+                      <ProtectedRoute>
+                        <Profile />
+                      </ProtectedRoute>
+                    }
+                  />
 
-                {/* Admin Routes */}
-                <Route
-                  path="/admin/*"
-                  element={
-                    <AdminRoute>
-                      <Admin />
-                    </AdminRoute>
-                  }
-                />
-              </Routes>
-            </Layout>
+                  {/* Admin Routes */}
+                  <Route
+                    path="/admin/*"
+                    element={
+                      <AdminRoute>
+                        <Admin />
+                      </AdminRoute>
+                    }
+                  />
+                </Routes>
+              </Layout>
+            </WishlistProvider>
           </CartProvider>
         </AuthProvider>
       </ThemeProvider>
@@ -83,3 +88,4 @@ function App() {
 }
 
 export default App;
+

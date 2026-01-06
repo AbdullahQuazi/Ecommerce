@@ -3,17 +3,22 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { FiMinus, FiPlus, FiShoppingCart, FiHeart, FiStar, FiArrowLeft } from 'react-icons/fi';
 import { productsAPI } from '../services/api';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
+import { useAuth } from '../context/AuthContext';
 
 const ProductDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { addToCart } = useCart();
+    const { isInWishlist, toggleWishlist } = useWishlist();
+    const { user } = useAuth();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [selectedSize, setSelectedSize] = useState('');
     const [selectedColor, setSelectedColor] = useState('');
     const [quantity, setQuantity] = useState(1);
     const [activeImage, setActiveImage] = useState(0);
+    const [wishlistLoading, setWishlistLoading] = useState(false);
 
     useEffect(() => {
         fetchProduct();
@@ -40,6 +45,18 @@ const ProductDetail = () => {
         }
         addToCart(product, quantity, selectedSize, selectedColor);
     };
+
+    const handleWishlistClick = async () => {
+        if (!user) {
+            alert('Please login to add items to your collection');
+            return;
+        }
+        setWishlistLoading(true);
+        await toggleWishlist(id);
+        setWishlistLoading(false);
+    };
+
+    const inWishlist = isInWishlist(id);
 
     if (loading) {
         return (
@@ -276,8 +293,16 @@ const ProductDetail = () => {
                                 <FiShoppingCart />
                                 {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
                             </button>
-                            <button className="btn btn-secondary btn-lg btn-icon">
-                                <FiHeart />
+                            <button
+                                className="btn btn-secondary btn-lg btn-icon"
+                                onClick={handleWishlistClick}
+                                disabled={wishlistLoading}
+                                style={{
+                                    color: inWishlist ? '#ef4444' : undefined,
+                                    transition: 'all 0.2s ease'
+                                }}
+                            >
+                                <FiHeart fill={inWishlist ? '#ef4444' : 'none'} />
                             </button>
                         </div>
 

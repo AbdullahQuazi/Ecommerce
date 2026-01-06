@@ -1,14 +1,16 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { FiShoppingCart, FiUser, FiLogOut, FiSun, FiMoon } from 'react-icons/fi';
+import { FiShoppingCart, FiUser, FiLogOut, FiSun, FiMoon, FiHeart } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useTheme } from '../context/ThemeContext';
+import { useWishlist } from '../context/WishlistContext';
 
 const Navbar = () => {
     const navigate = useNavigate();
     const { isAuthenticated, isAdmin, logout } = useAuth();
     const { totalItems } = useCart();
     const { isDark, toggleTheme } = useTheme();
+    const { wishlistCount } = useWishlist();
 
     const handleLogout = () => {
         logout();
@@ -44,6 +46,12 @@ const Navbar = () => {
                         {isDark ? <FiSun size={20} /> : <FiMoon size={20} />}
                     </button>
 
+                    {/* Wishlist/Collection Link */}
+                    <Link to="/collection" className="cart-badge" style={{ color: wishlistCount > 0 ? '#ef4444' : undefined }}>
+                        <FiHeart size={22} fill={wishlistCount > 0 ? '#ef4444' : 'none'} />
+                        {wishlistCount > 0 && <span className="cart-count" style={{ background: '#ef4444' }}>{wishlistCount}</span>}
+                    </Link>
+
                     <Link to="/cart" className="cart-badge">
                         <FiShoppingCart size={22} />
                         {totalItems > 0 && <span className="cart-count">{totalItems}</span>}
@@ -68,3 +76,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+

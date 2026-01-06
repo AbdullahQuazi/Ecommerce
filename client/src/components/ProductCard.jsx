@@ -2,10 +2,18 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FiShoppingCart, FiHeart, FiStar, FiCheck } from 'react-icons/fi';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
+import { useAuth } from '../context/AuthContext';
 
 const ProductCard = ({ product }) => {
     const { addToCart } = useCart();
+    const { isInWishlist, toggleWishlist } = useWishlist();
+    const { user } = useAuth();
     const [added, setAdded] = useState(false);
+    const [wishlistLoading, setWishlistLoading] = useState(false);
+
+    const productId = product.id || product._id;
+    const inWishlist = isInWishlist(productId);
 
     const handleAddToCart = (e) => {
         e.preventDefault();
@@ -17,12 +25,26 @@ const ProductCard = ({ product }) => {
         setTimeout(() => setAdded(false), 2000);
     };
 
+    const handleWishlistClick = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!user) {
+            alert('Please login to add items to your collection');
+            return;
+        }
+
+        setWishlistLoading(true);
+        await toggleWishlist(productId);
+        setWishlistLoading(false);
+    };
+
     const discount = product.originalPrice
         ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
         : 0;
 
     return (
-        <Link to={`/product/${product.id || product._id}`} className="product-card">
+        <Link to={`/product/${productId}`} className="product-card">
             <div className="product-image">
                 <img
                     src={product.images?.[0] || 'https://via.placeholder.com/300x400'}
@@ -49,8 +71,20 @@ const ProductCard = ({ product }) => {
                             </>
                         )}
                     </button>
-                    <button className="btn btn-secondary btn-icon btn-sm">
-                        <FiHeart size={16} />
+                    <button
+                        className={`btn btn-secondary btn-icon btn-sm ${inWishlist ? 'wishlist-active' : ''}`}
+                        onClick={handleWishlistClick}
+                        disabled={wishlistLoading}
+                        style={{
+                            color: inWishlist ? '#ef4444' : undefined,
+                            transition: 'all 0.2s ease'
+                        }}
+                    >
+                        <FiHeart
+                            size={16}
+                            fill={inWishlist ? '#ef4444' : 'none'}
+                            style={{ transition: 'all 0.2s ease' }}
+                        />
                     </button>
                 </div>
             </div>
@@ -76,3 +110,4 @@ const ProductCard = ({ product }) => {
 };
 
 export default ProductCard;
+
