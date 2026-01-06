@@ -2,14 +2,16 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
     FiHome, FiPackage, FiShoppingBag, FiUsers, FiPlus,
-    FiEdit2, FiTrash2, FiDollarSign, FiLogOut, FiX, FiCheck
+    FiEdit2, FiTrash2, FiDollarSign, FiLogOut, FiX, FiCheck, FiSun, FiMoon
 } from 'react-icons/fi';
 import { adminAPI, productsAPI, ordersAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 
 const Admin = () => {
     const navigate = useNavigate();
     const { logout, user } = useAuth();
+    const { isDark, toggleTheme } = useTheme();
     const [activeTab, setActiveTab] = useState('dashboard');
     const [stats, setStats] = useState(null);
     const [products, setProducts] = useState([]);
@@ -108,9 +110,14 @@ const Admin = () => {
             {/* Mobile Header */}
             <div className="admin-mobile-header">
                 <h3>Admin Panel</h3>
-                <button onClick={handleLogout} className="btn btn-secondary btn-sm">
-                    <FiLogOut size={16} />
-                </button>
+                <div style={{ display: 'flex', gap: 'var(--spacing-sm)' }}>
+                    <button onClick={toggleTheme} className="btn btn-secondary btn-sm btn-icon">
+                        {isDark ? <FiSun size={16} /> : <FiMoon size={16} />}
+                    </button>
+                    <button onClick={handleLogout} className="btn btn-secondary btn-sm">
+                        <FiLogOut size={16} />
+                    </button>
+                </div>
             </div>
 
             {/* Sidebar - Desktop */}
@@ -132,9 +139,14 @@ const Admin = () => {
                     <button className={`admin-nav-item ${activeTab === 'users' ? 'active' : ''}`} onClick={() => setActiveTab('users')}>
                         <FiUsers /> Users
                     </button>
-                    <button className="admin-nav-item" onClick={handleLogout} style={{ marginTop: 'auto', color: 'var(--color-error)' }}>
-                        <FiLogOut /> Logout
-                    </button>
+                    <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-sm)' }}>
+                        <button className="admin-nav-item" onClick={toggleTheme}>
+                            {isDark ? <FiSun /> : <FiMoon />} {isDark ? 'Light Mode' : 'Dark Mode'}
+                        </button>
+                        <button className="admin-nav-item" onClick={handleLogout} style={{ color: 'var(--color-error)' }}>
+                            <FiLogOut /> Logout
+                        </button>
+                    </div>
                 </nav>
             </aside>
 
