@@ -113,4 +113,34 @@ router.put('/:id/status', protect, admin, (req, res) => {
     }
 });
 
+// @route   PUT /api/orders/:id/cancel (User cancel request)
+router.put('/:id/cancel', protect, (req, res) => {
+    try {
+        const orders = readJSON('orders.json');
+        const index = orders.findIndex(o => o.id === req.params.id);
+
+        if (index === -1) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        // Check if order belongs to user
+        if (orders[index].user.id !== req.user.id) {
+            return res.status(403).json({ message: 'Not authorized' });
+        }
+
+        // Only allow cancel request for pending or processing orders
+        if (!['pending', 'processing'].includes(orders[index].status)) {
+            return res.status(400).json({ message: 'Cannot cancel order at this stage' });
+        }
+
+        orders[index].status = 'cancel_requested';
+        orders[index].cancelRequestedAt = new Date().toISOString();
+
+        writeJSON('orders.json', orders);
+        res.json({ message: 'Cancel request submitted', status: 'cancel_requested' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 module.exports = router;

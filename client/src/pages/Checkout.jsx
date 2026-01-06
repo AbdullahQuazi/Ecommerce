@@ -10,6 +10,7 @@ const Checkout = () => {
     const [loading, setLoading] = useState(false);
     const [orderPlaced, setOrderPlaced] = useState(false);
     const [address, setAddress] = useState({
+        phone: '',
         street: '',
         city: '',
         state: '',
@@ -99,6 +100,19 @@ const Checkout = () => {
                         <div className="auth-card" style={{ marginBottom: 'var(--spacing-xl)' }}>
                             <h3 style={{ marginBottom: 'var(--spacing-xl)' }}>Shipping Address</h3>
                             <form onSubmit={handleSubmit}>
+                                <div className="form-group">
+                                    <label className="form-label">Phone Number</label>
+                                    <input
+                                        type="tel"
+                                        name="phone"
+                                        className="form-input"
+                                        placeholder="Enter your phone number"
+                                        value={address.phone}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+
                                 <div className="form-group">
                                     <label className="form-label">Street Address</label>
                                     <input

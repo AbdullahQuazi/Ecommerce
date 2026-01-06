@@ -318,7 +318,7 @@ const Admin = () => {
                             <div>
                                 <h1 style={{ marginBottom: 'var(--spacing-xl)' }}>Orders ({orders.length})</h1>
                                 <table className="data-table">
-                                    <thead><tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+                                    <thead><tr><th>Order ID</th><th>Customer</th><th>Phone</th><th>Address</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
                                     <tbody>
                                         {orders.map((order) => (
                                             <tr key={order._id || order.id}>
@@ -329,6 +329,15 @@ const Admin = () => {
                                                         <p style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)' }}>{order.user?.email}</p>
                                                     </div>
                                                 </td>
+                                                <td>{order.shippingAddress?.phone || 'N/A'}</td>
+                                                <td>
+                                                    <div style={{ fontSize: '0.75rem', maxWidth: '200px' }}>
+                                                        <p>{order.shippingAddress?.street}</p>
+                                                        <p style={{ color: 'var(--color-text-secondary)' }}>
+                                                            {order.shippingAddress?.city}, {order.shippingAddress?.state} {order.shippingAddress?.zipCode}
+                                                        </p>
+                                                    </div>
+                                                </td>
                                                 <td>{order.items?.length} items</td>
                                                 <td>₹{order.totalPrice?.toLocaleString()}</td>
                                                 <td>
@@ -337,6 +346,7 @@ const Admin = () => {
                                                         <option value="processing">Processing</option>
                                                         <option value="shipped">Shipped</option>
                                                         <option value="delivered">Delivered</option>
+                                                        <option value="cancel_requested">Cancel Requested</option>
                                                         <option value="cancelled">Cancelled</option>
                                                     </select>
                                                 </td>

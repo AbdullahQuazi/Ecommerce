@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FiPackage, FiUser, FiMapPin } from 'react-icons/fi';
+import { FiPackage, FiUser, FiMapPin, FiX } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { ordersAPI } from '../services/api';
 
@@ -21,6 +21,19 @@ const Profile = () => {
             console.error('Error fetching orders:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleCancelOrder = async (orderId) => {
+        if (window.confirm('Are you sure you want to request cancellation for this order?')) {
+            try {
+                await ordersAPI.cancelRequest(orderId);
+                setOrders(orders.map(o =>
+                    (o._id === orderId || o.id === orderId) ? { ...o, status: 'cancel_requested' } : o
+                ));
+            } catch (error) {
+                alert(error.response?.data?.message || 'Failed to request cancellation');
+            }
         }
     };
 
@@ -194,14 +207,26 @@ const Profile = () => {
                                                 <div style={{
                                                     display: 'flex',
                                                     justifyContent: 'space-between',
+                                                    alignItems: 'center',
                                                     marginTop: 'var(--spacing-lg)',
                                                     paddingTop: 'var(--spacing-lg)',
                                                     borderTop: '1px solid var(--color-border)'
                                                 }}>
-                                                    <span style={{ color: 'var(--color-text-secondary)' }}>Total</span>
-                                                    <span style={{ fontWeight: 600, fontSize: '1.125rem' }}>
-                                                        ₹{order.totalPrice.toLocaleString()}
-                                                    </span>
+                                                    <div>
+                                                        <span style={{ color: 'var(--color-text-secondary)' }}>Total: </span>
+                                                        <span style={{ fontWeight: 600, fontSize: '1.125rem' }}>
+                                                            ₹{order.totalPrice.toLocaleString()}
+                                                        </span>
+                                                    </div>
+                                                    {['pending', 'processing'].includes(order.status) && (
+                                                        <button
+                                                            onClick={() => handleCancelOrder(order._id || order.id)}
+                                                            className="btn btn-secondary btn-sm"
+                                                            style={{ color: 'var(--color-error)' }}
+                                                        >
+                                                            <FiX size={14} /> Cancel Order
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </div>
                                         ))}
