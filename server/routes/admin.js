@@ -13,7 +13,9 @@ router.get('/stats', protect, admin, (req, res) => {
         const totalUsers = users.filter(u => u.role === 'user').length;
         const totalProducts = products.length;
         const totalOrders = orders.length;
-        const totalRevenue = orders.reduce((acc, o) => acc + (o.totalPrice || 0), 0);
+        const totalRevenue = orders
+            .filter(o => !['cancelled', 'cancel_requested'].includes(o.status))
+            .reduce((acc, o) => acc + (o.totalPrice || 0), 0);
 
         const recentOrders = orders
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
